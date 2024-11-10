@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "noah"
+version = "0.1.0"
+description = "Benachrichtigt Leute bei Angeboten"
+authors = ["lukas <lukas.meinzer.98@web.de>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+SQLAlchemy = "*"
+pandas = "*"
+requests = "^2.32.3"
+python-telegram-bot = "^21.6"
+python-dotenv = "^1.0.1"
+
+[tool.poetry.dev-dependencies]
+ipykernel = "^6.29.5"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

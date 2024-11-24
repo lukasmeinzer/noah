@@ -95,7 +95,42 @@ app.add_handler(CommandHandler("del", del_offer))
 app.add_handler(CommandHandler("list", list_offers))
 app.add_handler(CommandHandler("help", help_command))
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+def get_updates_easy():
+    import requests
+    import os
+    TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    URL = f"https://api.telegram.org/bot{TOKEN}/getUpdates"
+
+    # Fetch updates
+    response = requests.get(URL)
+    updates = response.json()
+
+
+
+
+
+
+
 # Run the bot
 if __name__ == "__main__":
     print("Starting bot...")
     app.run_polling()
+    
+    

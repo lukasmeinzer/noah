@@ -10,9 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set up SSH key
+      run: |
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H your-server-ip >> ~/.ssh/known_hosts
+
+
     - name: Build and Run Docker Container
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@87.106.165.63 << EOF
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << EOF
           cd /git_local/noah
           git pull
           docker compose down || true

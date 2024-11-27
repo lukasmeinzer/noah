@@ -1,5 +1,8 @@
 services:
   bot:
+    build:
+      context: .
+      no_cache: true   # Disable caching
     image: telegram-bot
     restart: unless-stopped
     environment:

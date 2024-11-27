@@ -12,7 +12,7 @@ jobs:
     steps:
     - name: Build and Run Docker Container
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << EOF
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_IP }} << EOF
           cd /git_local/noah
           git pull
           docker compose down || true

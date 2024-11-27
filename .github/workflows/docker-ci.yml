@@ -22,7 +22,7 @@ jobs:
     - name: Build and Run Docker Container
       run: |
         ssh -o StrictHostKeyChecking=no root@87.106.165.63 << EOF
-          cd /git_local/noah
+          cd git_local/noah
           git pull
           docker compose down || true
           docker compose up -d --build

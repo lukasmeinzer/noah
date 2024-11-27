@@ -12,10 +12,10 @@ jobs:
     steps:
     - name: Set up SSH key
       run: |
-        mkdir -p ~/.ssh                # Create the .ssh directory
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa  # Add the private key
-        chmod 600 ~/.ssh/id_rsa        # Secure the key
-        ssh-keyscan -H your-server-ip >> ~/.ssh/known_hosts  # Add server to known hosts
+        mkdir -p ~/.ssh                
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa 
+        chmod 600 ~/.ssh/id_rsa       
+        ssh-keyscan -H 87.106.165.63 >> ~/.ssh/known_hosts  
 
 
 

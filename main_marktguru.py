@@ -93,7 +93,7 @@ def main():
 # -----------------------------------------------------------------------
 
 
-    TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+    TOKEN = os.getenv("NOAHs_TOKEN")
     CHAT_ID_RAFI = os.getenv("RafiKleiner_CHAT_ID")
     CHAT_ID_LUKAS = os.getenv("LukasMeinzer_CHAT_ID")
 

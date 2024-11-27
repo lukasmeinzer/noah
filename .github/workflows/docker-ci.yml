@@ -25,5 +25,5 @@ jobs:
           cd git_local/noah
           git pull
           docker compose down || true
-          docker compose up -d --build --force-recreate
+          docker compose up -d --build --no-cache --force-recreate
         EOF

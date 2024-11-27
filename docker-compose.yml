@@ -1,0 +1,6 @@
+services:
+  bot:
+    image: telegram-bot
+    restart: unless-stopped
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}

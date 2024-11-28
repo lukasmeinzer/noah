@@ -3,11 +3,11 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
 # Define your command handlers
-async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Hi, schön dich zu sehen :)")
+def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    return update.message.reply_text("Hi, schön dich zu sehen :)")
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Available commands:\n/start - Start the bot\n/help - Get help")
+def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    return update.message.reply_text("Available commands:\n/start - Start the bot\n/help - Get help")
 
 def new_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     return update.message.reply_text("test")

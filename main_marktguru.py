@@ -1,3 +1,7 @@
+# In dieser Datei steht der Bot für sich.
+# Der benachrichtigt nur dann, wenn M&Ms im Angebot sind und auch nur für zwei User
+# Für den allgemeinen Schnäppchenjäger_Bot in bot/ schauen
+
 from datetime import timedelta, datetime
 import json
 import requests

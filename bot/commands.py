@@ -72,14 +72,19 @@ async def add_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     context.user_data["adding_products"] = True
     context.user_data["user"] = user
     
-    await update.message.reply_text("Bitte schick mir ein Einzelnes oder eine Liste von Produkten, mit Kommas getrennt")
+    await update.message.reply_text(
+        "Bitte schick mir ein Einzelnes oder eine Liste von Produkten, mit Kommas getrennt")
     
 
 async def del_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = await check_for_user(update)
     if user is None: return
     
-    await update.message.reply_text("Noch nicht implementiert")
+    context.user_data["deleting_products"] = True
+    context.user_data["user"] = user
+    
+    await update.message.reply_text(
+        "Bitte schick mir ein Einzelnes oder eine Liste von Produkten, mit Kommas getrennt")
 
 
 async def add_markets(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -96,7 +101,10 @@ async def del_markets(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     user = await check_for_user(update)
     if user is None: return
     
-    await update.message.reply_text("Noch nicht implementiert")
+    context.user_data["user"] = user
+    context.user_data["deleting_markets"] = True
+    
+    await update.message.reply_text("Bitte schick mir einen Einzelnen oder eine Liste von Supermärkten, mit Kommas getrennt")
 
 
 async def show_me(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

@@ -4,7 +4,7 @@ import json
 
 class User():
     def __init__(self, id: int, first_name: str, last_name: str | None, zip_code : str | None, markets: list | None, products: list | None):
-        self.id = id
+        self.id = id # entspricht auch der chat_id
         self.first_name = first_name
         self.last_name = last_name
         self.zip_code = zip_code if zip_code is not None else None

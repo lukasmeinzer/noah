@@ -4,13 +4,13 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 
 # Define your command handlers
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Hello! I am your bot. How can I assist you?")
+    await update.message.reply_text("Hi, schön dich zu sehen :)")
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Available commands:\n/start - Start the bot\n/help - Get help")
 
-async def new_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("moooomentnchen")
+def new_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    return update.message.reply_text("test")
 
 # Main function to run the bot
 def main():

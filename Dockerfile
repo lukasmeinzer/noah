@@ -14,4 +14,4 @@ RUN poetry install
 COPY . /app/
 
 # Command to run the bot
-CMD ["poetry", "run", "python", "bot.py"]
+CMD ["poetry", "run", "python", "bot/bot.py"]

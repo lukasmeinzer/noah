@@ -11,7 +11,7 @@ RUN pip install --no-cache-dir poetry
 COPY pyproject.toml poetry.lock ./
 RUN poetry install 
 
-COPY bot /app/
+COPY ./bot /app/
 
 # Command to run the bot
 CMD ["poetry", "run", "python", "bot/bot.py"]

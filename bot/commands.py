@@ -2,14 +2,12 @@ import json
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from user import User
-from utils import check_for_user
+from user import User, load_users, save_users, check_for_user
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
-    with open("bot/known_users.json", "r") as f:
-        known_users = json.load(f)
+    known_users = load_users()
     
     if str(update.effective_user.id) not in known_users:
         user = User(
@@ -21,8 +19,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             products=None,
         )
         known_users[user.id] = user.to_dict()
-        with open("bot/known_users.json", "w") as f:
-            json.dump(known_users, f, indent=4)
+        save_users(known_users)
     else:
         user_data = known_users[str(update.effective_user.id)]
         user = User(**user_data) 

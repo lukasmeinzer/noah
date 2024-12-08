@@ -1,5 +1,6 @@
 from typing import Literal
 import json
+from telegram import Update
 
 
 class User():
@@ -36,11 +37,34 @@ class User():
 
 
 def save_updates(id, to_update: str, updating):
-    with open("bot/known_users.json", "r") as f:
-        known_users = json.load(f)
+    known_users = load_users()
     
     known_users[str(id)][to_update] = updating
     
-    with open("bot/known_users.json", "w") as f:
-        json.dump(known_users, f, indent=4)
+    save_users(known_users)
+
+
+def load_users() -> dict:
+    try:
+        with open("users.json", "r") as f:
+            known_users = json.load(f)
+    except KeyError as e:
+        print("Keine users.json vorhanden.")
+    return known_users
+
+
+def save_users(known_users: dict):
+    with open("users.json", "w", encoding="utf-8") as f:
+        json.dump(known_users, f, ensure_ascii=False, indent=4)
         
+        
+async def check_for_user(update: Update) -> User | None:
+    known_users = load_users()
+
+    try:
+        user_data = known_users[str(update.effective_user.id)]
+        user = User(**user_data) 
+        return user
+    except:
+        await update.message.reply_text("Du bist noch nicht registriert. Bitte führe /start aus.")
+        return 

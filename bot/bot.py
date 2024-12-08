@@ -5,6 +5,7 @@ from telegram.ext import ContextTypes
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import commands
+from user_input import handle_product_input, handle_zip_code_input, handle_market_input
 from notify import notify_users_with_new_offers
 
 

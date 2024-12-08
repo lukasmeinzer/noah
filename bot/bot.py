@@ -2,9 +2,10 @@ import os
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from telegram import Update
 from telegram.ext import ContextTypes
+from apscheduler.schedulers.background import BackgroundScheduler
 
 import commands
-from handle_io import handle_product_input, handle_zip_code_input, handle_market_input
+from notify import notify_users_with_new_offers
 
 
 async def handle_no_command_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -37,6 +38,11 @@ def main():
     application.add_handler(CommandHandler("add_markets", commands.add_markets))
     application.add_handler(CommandHandler("del_products", commands.del_products))
     application.add_handler(CommandHandler("del_markets", commands.del_markets))
+    
+    # Täglich nach neuen Angeboten suchen und Nutzer benachrichtigen
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(notify_users_with_new_offers, "cron", hour=9, minute=0, args=[TOKEN])
+    scheduler.start()
     
     application.run_polling()
 

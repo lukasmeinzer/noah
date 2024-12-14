@@ -2,6 +2,7 @@ import json
 import requests
 from datetime import timedelta, datetime
 import re
+from typing import Tuple
 
 from utils import get_headers_marktguru, save_offers, dict_diff
 from user import load_users
@@ -77,11 +78,7 @@ def gather_info_from_data(extracted_data: list) -> dict:
 
 
 
-
-
-
-
-def new_offers_available() -> (bool | dict) :
+def new_offers_available() -> Tuple[bool, dict, dict]:
     known_users = load_users()
     urls_to_scrape = gather_urls(known_users)
     extracted_data = gather_data_from_urls(urls_to_scrape)
@@ -99,10 +96,10 @@ def new_offers_available() -> (bool | dict) :
 
     if not new_offers_available:
         # no new offers. dont do anything
-        return False, diffs
+        return False, diffs, known_users
     
     # new offers!
     save_offers(dict_angebote)
-    return True, diffs
+    return True, diffs, known_users
 
 

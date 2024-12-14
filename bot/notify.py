@@ -3,7 +3,7 @@ import requests
 from scraping import new_offers_available
 
 def notify_users_with_new_offers(TOKEN: str):
-    noa, diffs = new_offers_available()
+    noa, diffs, users = new_offers_available()
     if not noa:
         # nothing to notify
         return
@@ -20,28 +20,38 @@ def notify_users_with_new_offers(TOKEN: str):
         case_newOffer = changes["to"] is not None # triggered auch bei Updates
         
         if case_oldOffer:
+            user_id = changes['from']["user_id"]
+            old_product = changes['from']["gesuchtes_produkt"].lower()
+            produkt_noch_valide = old_product in users[user_id]["products"]
+            if not produkt_noch_valide:
+                break
             text = f"Hinweis: {supermarkt.upper()} hat Produkt {changes['from']['gefundenes_produkt']} nicht mehr im Angebot."
             requests.post(
                 url_sendText, 
                 data={
-                    "chat_id": changes["from"]["user_id"], 
+                    "chat_id": user_id, 
                     "text": text
                 },
             )
         if case_newOffer:
+            user_id = changes['to']["user_id"]
+            new_product = changes['to']["gesuchtes_produkt"].lower()
+            produkt_noch_valide = new_product in users[user_id]["products"]
+            if not produkt_noch_valide:
+                break
             text_gesamt = create_newOffer_text(supermarkt, changes) 
         
             requests.post(
                 url_sendText, 
                 data={
-                    "chat_id": changes["to"]["user_id"], 
+                    "chat_id": user_id, 
                     "text": text_gesamt
                 },
             )
             requests.post(
                 url_sendPhoto, 
                 data={
-                    "chat_id": changes["to"]["user_id"], 
+                    "chat_id": user_id, 
                     "photo": changes["to"]["image"]
                 },
             )

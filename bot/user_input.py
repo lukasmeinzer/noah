@@ -1,8 +1,29 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from typing import Literal
+from datetime import datetime
+import json
 
 from user import User
+
+
+async def handle_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    input_feedback = update.message.text.strip()
+    
+    str_now = datetime.today().strftime("%Y-%m-%d_%H:%M:%S_UTC")
+    
+    with open("feedback.json", "r") as f:
+        json_feedback = json.load(f)
+    
+    json_feedback[str_now] = input_feedback
+    
+    with open("feedback.json", "w", encoding="utf-8") as f:
+        json.dump(json_feedback, f, ensure_ascii=False, indent=4)
+    
+    context.user_data["giving_feedback"] = False
+    
+    await update.message.reply_text(f"Merci. :)")
+        
 
 async def handle_zip_code_input(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user: User = context.user_data["user"]

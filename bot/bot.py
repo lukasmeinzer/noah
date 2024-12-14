@@ -5,11 +5,19 @@ from telegram.ext import ContextTypes
 from apscheduler.schedulers.background import BackgroundScheduler
 
 import commands
-from user_input import handle_product_input, handle_zip_code_input, handle_market_input
+from user_input import (
+    handle_product_input, 
+    handle_zip_code_input, 
+    handle_market_input,
+    handle_feedback,
+)
 from notify import notify_users_with_new_offers
 
 
 async def handle_no_command_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if "giving_feedback" in context.user_data and context.user_data["giving_feedback"]:
+        await handle_feedback(update, context)
+        
     if "adding_products" in context.user_data and context.user_data["adding_products"]:
         await handle_product_input("add", update, context)
         
@@ -41,6 +49,7 @@ def main():
     application.add_handler(CommandHandler("add_markets", commands.add_markets))
     application.add_handler(CommandHandler("del_products", commands.del_products))
     application.add_handler(CommandHandler("del_markets", commands.del_markets))
+    application.add_handler(CommandHandler("feedback", commands.feedback))
     
     # Täglich nach neuen Angeboten suchen und Nutzer benachrichtigen
     scheduler = BackgroundScheduler()

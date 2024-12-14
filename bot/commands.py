@@ -47,9 +47,20 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/set_zip - Postleitzahl konfigurieren \n" \
         "/add_products - Produkte zur Watchlist hinzufügen \n" \
         "/del_products - Produkte von der Watchlist entfernen \n" \
-        "/add_markets - Supermärkte zur Watchlist hinzufügen (Disclaimer: noch nicht funktionsfähig.) \n" \
-        "/del_markets - Supermärkte von der Watchlist entfernen (Disclaimer: noch nicht funktionsfähig.) \n" \
-        "/show_me - Zeige meinen Konfigurationsstand \n")
+        "/add_markets - Supermärkte zur Watchlist hinzufügen (Disclaimer: noch nicht funktionsfähig) \n" \
+        "/del_markets - Supermärkte von der Watchlist entfernen (Disclaimer: noch nicht funktionsfähig) \n" \
+        "/show_me - Zeige meinen Konfigurationsstand \n"
+        "/feedback - Anonymes Feedback abgeben \n ")
+    
+
+async def feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = await check_for_user(update)
+    if user is None: return
+    
+    context.user_data["giving_feedback"] = True
+    context.user_data["user"] = user
+    
+    await update.message.reply_text("Bitte gib jetzt dein Feedback. Ich freue mich über jede Art von Vorschlägen/Fehlermeldungen/Wünschen. Deine Nachricht wird anonymisiert gespeichert.")
 
 
 async def set_zip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

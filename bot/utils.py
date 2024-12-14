@@ -39,7 +39,10 @@ def load_offers() -> dict:
     return known_users
 
 
-def dict_diff(dict1, dict2):
+def dict_diff(dict1: dict, dict2: dict) -> dict: 
+    """
+    Vergleiche zwei dicts und gib ein dict mit den Änderungen zurück
+    """
     diff = {}
 
     # Find keys present in dict1 but not in dict2

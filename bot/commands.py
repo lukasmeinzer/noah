@@ -9,6 +9,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     known_users = load_users()
     
+    # new user
     if str(update.effective_user.id) not in known_users:
         user = User(
             id=update.effective_user.id,
@@ -20,13 +21,18 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         )
         known_users[user.id] = user.to_dict()
         save_users(known_users)
-    else:
+        str_reply = f"Hi {user.first_name}, schön dich zu sehen :) \n" \
+            "Du bist scheinbar zum ersten Mal hier! Mit /about erfährst du was dieser Bot kann. \n" \
+            "Mit /help siehst du alle verfügbaren Kommandos. \n" \
+            "Am Anfang ist es auch sinnvoll, deine Postleitzahl mit /set_zip anzugeben"
+    # known user
+    else: 
         user_data = known_users[str(update.effective_user.id)]
         user = User(**user_data) 
-    
-    await update.message.reply_text(
-        f"Hi {user.first_name}, schön dich zu sehen :) \n" \
-        "Mit /help erhälst du mehr Infos")
+        str_reply = f"Hi {user.first_name}, schön dich zu sehen :) \n" \
+            "Mit /help siehst du alle verfügbaren Kommandos."
+        
+    await update.message.reply_text(str_reply)
 
 
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

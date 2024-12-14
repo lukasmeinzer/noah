@@ -21,7 +21,7 @@ async def handle_product_input(update_method: Literal["add", "delete"], update: 
     user: User = context.user_data["user"]
     
     products_input = update.message.text
-    products = [product.strip().lower() for product in products_input.split(",") if product != ""]
+    products = [product.strip() for product in products_input.split(",") if product != ""]
     # Check, if product is valid
 
     user.update("products", update_method, products)

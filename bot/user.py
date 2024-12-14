@@ -14,9 +14,10 @@ class User():
         
         
     def update(self, to_update: Literal["markets", "products"], update_method: Literal["add", "delete"], updates: list):
+        updates = [item.lower() for item in updates]
         match to_update:
-            case "markets": updating = self.markets
-            case "products": updating = self.products
+            case "markets": updating = [item.lower() for item in self.markets]
+            case "products": updating = [item.lower() for item in self.products]
             case _: raise KeyError("Invalid 'to_update' value")
         
         match update_method:

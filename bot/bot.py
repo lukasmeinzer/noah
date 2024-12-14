@@ -12,11 +12,13 @@ from notify import notify_users_with_new_offers
 async def handle_no_command_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if "adding_products" in context.user_data and context.user_data["adding_products"]:
         await handle_product_input("add", update, context)
+        
     if "deleting_products" in context.user_data and context.user_data["deleting_products"]:
         await handle_product_input("delete", update, context)
         
     if "adding_markets" in context.user_data and context.user_data["adding_markets"]:
         await handle_market_input("add", update, context)
+        
     if "deleting_markets" in context.user_data and context.user_data["deleting_markets"]:
         await handle_market_input("delete", update, context)
         

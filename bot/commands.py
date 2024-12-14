@@ -47,8 +47,8 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/set_zip - Postleitzahl konfigurieren \n" \
         "/add_products - Produkte zur Watchlist hinzufügen \n" \
         "/del_products - Produkte von der Watchlist entfernen \n" \
-        "/add_markets - Supermärkte zur Watchlist hinzufügen \n" \
-        "/del_markets - Supermärkte von der Watchlist entfernen \n" \
+        "/add_markets - Supermärkte zur Watchlist hinzufügen (Disclaimer: noch nicht funktionsfähig.) \n" \
+        "/del_markets - Supermärkte von der Watchlist entfernen (Disclaimer: noch nicht funktionsfähig.) \n" \
         "/show_me - Zeige meinen Konfigurationsstand \n")
 
 

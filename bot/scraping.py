@@ -1,11 +1,10 @@
-import json
 import requests
 from datetime import timedelta, datetime
 import re
 from typing import Tuple
 
-from utils import get_headers_marktguru, save_offers, dict_diff
-from user import load_users
+from bot.utils import get_headers_marktguru, save_offers, dict_diff, load_offers
+from bot.user import load_users
 
 
 # Für welche Users muss ich welche Urls scrapen?
@@ -47,7 +46,7 @@ def gather_info_from_data(extracted_data: list) -> dict:
             preis = market["price"]
             alter_preis = market["oldPrice"]
             referenz_preis = market["referencePrice"]
-            requiresLoyalityMembership =  market["requiresLoyalityMembership"]
+            requiresLoyaltyMembership =  market["requiresLoyaltyMembership"]
 
             date_string = market["validityDates"][0]["from"][:10]
             gültig_von_dateobj =  datetime.strptime(date_string, '%Y-%m-%d') + timedelta(days=1)
@@ -67,7 +66,7 @@ def gather_info_from_data(extracted_data: list) -> dict:
             "preis": preis,
             "alter_preis": alter_preis,
             "referenz_preis": referenz_preis,
-            "requiresLoyalityMembership": requiresLoyalityMembership,
+            "requiresLoyaltyMembership": requiresLoyaltyMembership,
             "gültig_von": gültig_von,
             "gültig_bis": gültig_bis,
             "gefundenes_produkt": gefundenes_produkt,
@@ -84,11 +83,7 @@ def new_offers_available() -> Tuple[bool, dict, dict]:
     extracted_data = gather_data_from_urls(urls_to_scrape)
     dict_angebote = gather_info_from_data(extracted_data)
     # new offers available?
-    try:
-        with open("offers.json", "r") as file:
-            dict_angebote_ALT = json.load(file)
-    except:
-        dict_angebote_ALT = ""
+    dict_angebote_ALT = load_offers()
 
     diffs = dict_diff(dict1=dict_angebote_ALT, dict2=dict_angebote)
 

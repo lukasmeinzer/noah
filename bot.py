@@ -4,14 +4,14 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from apscheduler.schedulers.background import BackgroundScheduler
 
-import commands
-from user_input import (
+from bot import commands
+from bot.user_input import (
     handle_product_input, 
     handle_zip_code_input, 
     handle_market_input,
     handle_feedback,
 )
-from notify import notify_users_with_new_offers
+from bot.notify import notify_users_with_new_offers
 
 
 async def handle_no_command_message(update: Update, context: ContextTypes.DEFAULT_TYPE):

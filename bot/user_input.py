@@ -2,9 +2,13 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from typing import Literal
 from datetime import datetime
-import json
+from sqlalchemy.orm import sessionmaker
 
-from user import User
+from bot.user import User
+from database.models import Feedback, engine
+
+Session = sessionmaker(bind=engine)
+session = Session()
 
 
 async def handle_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -12,13 +16,9 @@ async def handle_feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     
     str_now = datetime.today().strftime("%Y-%m-%d_%H:%M:%S_UTC")
     
-    with open("feedback.json", "r") as f:
-        json_feedback = json.load(f)
-    
-    json_feedback[str_now] = input_feedback
-    
-    with open("feedback.json", "w", encoding="utf-8") as f:
-        json.dump(json_feedback, f, ensure_ascii=False, indent=4)
+    feedback_entry = Feedback(timestamp=str_now, feedback=input_feedback)
+    session.add(feedback_entry)
+    session.commit()
     
     context.user_data["giving_feedback"] = False
     

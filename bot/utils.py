@@ -1,7 +1,11 @@
 import os
 import requests
-import json
+from sqlalchemy.orm import sessionmaker
 
+from database.models import Offer as OfferModel, engine
+
+Session = sessionmaker(bind=engine)
+session = Session()
 
 def get_updates_easy():
     TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -27,16 +31,14 @@ def get_headers_marktguru():
 
 
 def save_offers(dict_angebote: dict):
-    with open("offers.json", "w", encoding="utf-8") as f:
-        json.dump(dict_angebote, f, ensure_ascii=False, indent=4)
+    for _, offer_data in dict_angebote.items():
+        offer = OfferModel(**offer_data)
+        session.add(offer)
+    session.commit()
 
 def load_offers() -> dict:
-    try:
-        with open("offers.json", "r") as f:
-            known_users = json.load(f)
-    except KeyError as e:
-        print("Keine offers.json vorhanden.")
-    return known_users
+    offers = session.query(OfferModel).all()
+    return {offer.supermarkt: offer.to_dict() for offer in offers}
 
 
 def dict_diff(dict1: dict, dict2: dict) -> dict: 

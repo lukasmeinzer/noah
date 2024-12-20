@@ -2,7 +2,7 @@ import json
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from user import User, load_users, save_users, check_for_user
+from bot.user import User, load_users, save_users, check_for_user
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

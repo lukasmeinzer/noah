@@ -62,11 +62,31 @@ def load_users() -> dict:
         markets=json.loads(user.markets),
         products=json.loads(user.products)
     ) for user in users}
+    
+def load_user(id: int) -> User | None:
+    user = session.query(UserModel).filter_by(id=id).first()
+    if user:
+        return User(
+            id=user.id,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            zip_code=user.zip_code,
+            markets=json.loads(user.markets),
+            products=json.loads(user.products)
+        )
+    return None
 
-def save_users(known_users: dict):
-    for user_data in known_users.values():
-        user = UserModel(**user_data)
-        session.add(user)
+def save_user(user: User):
+    user_data = user.to_dict()
+    new_user = UserModel(
+        id=user_data['id'],
+        first_name=user_data['first_name'],
+        last_name=user_data['last_name'],
+        zip_code=user_data['zip_code'],
+        markets=json.dumps(user_data['markets']),
+        products=json.dumps(user_data['products'])
+    )
+    session.add(new_user)
     session.commit()
 
 async def check_for_user(update: Update) -> User | None:

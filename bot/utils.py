@@ -1,11 +1,6 @@
 import os
 import requests
-from sqlalchemy.orm import sessionmaker
 
-from database.models import Offer as OfferModel, engine
-
-Session = sessionmaker(bind=engine)
-session = Session()
 
 def get_updates_easy():
     TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -16,7 +11,7 @@ def get_updates_easy():
     updates = response.json()
 
 
-def get_headers_marktguru():
+def get_headers_marktguru() -> dict:
     return {
         'X-ClientKey': 'hHASZX6oiDywTGnEUxx4PAdU0nWbyHi+0hkaVivc4aM=',
         'sec-ch-ua': '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
@@ -30,20 +25,9 @@ def get_headers_marktguru():
     }
 
 
-def save_offers(dict_angebote: dict):
-    for _, offer_data in dict_angebote.items():
-        offer = OfferModel(**offer_data)
-        session.add(offer)
-    session.commit()
-
-def load_offers() -> dict:
-    offers = session.query(OfferModel).all()
-    return {offer.supermarkt: offer.to_dict() for offer in offers}
-
-
 def dict_diff(dict1: dict, dict2: dict) -> dict: 
     """
-    Vergleiche zwei dicts und gib ein dict mit den Änderungen zurück
+    Compare two dicts and return a dict with the changes
     """
     diff = {}
 

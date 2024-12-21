@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
 
-class User(Base):
+class UserModel(Base):
     __tablename__ = 'users'
     id = Column(BigInteger, primary_key=True, autoincrement=True)
     first_name = Column(String(50))  # Specify length
@@ -13,9 +13,9 @@ class User(Base):
     markets = Column(Text, nullable=True)  # Store as JSON string
     products = Column(Text, nullable=True)  # Store as JSON string
 
-    offers = relationship("Offer", back_populates="user")
+    offers = relationship("OfferModel", back_populates="user")
 
-class Offer(Base):
+class OfferModel(Base):
     __tablename__ = 'offers'
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(BigInteger, ForeignKey('users.id'))
@@ -31,7 +31,7 @@ class Offer(Base):
     gefundenes_produkt = Column(String(100))  # Specify length
     image = Column(String(512))  # Specify length
 
-    user = relationship("User", back_populates="offers")
+    user = relationship("UserModel", back_populates="offers")
 
 class Feedback(Base):
     __tablename__ = 'feedback'

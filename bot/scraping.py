@@ -3,16 +3,17 @@ from datetime import timedelta, datetime
 import re
 from typing import Tuple
 
-from bot.utils import get_headers_marktguru, save_offers, dict_diff, load_offers
+from bot.utils import get_headers_marktguru, dict_diff
 from bot.user import load_users
+from bot.offer import load_offers, save_offers
 
 
 # Für welche Users muss ich welche Urls scrapen?
 def gather_urls(known_users: dict) -> list:
     urls_to_scrape = list()
     for id, user in known_users.items():
-        zip_code = user["zip_code"]
-        products = user["products"]
+        zip_code = user.zip_code
+        products = user.products
         for product in products:
             search_term_product = re.sub("[^A-Za-z0-9 ]+", "", product)
             search_term_product = search_term_product.replace(" ", "%20").lower()
@@ -23,15 +24,12 @@ def gather_urls(known_users: dict) -> list:
 
 # Welche Daten muss ich mir mit den URLs anschauen?
 def gather_data_from_urls(urls_to_scrape: list) -> list:
+    headers = get_headers_marktguru()
     extracted_data = list()
     for id, product, url in urls_to_scrape:
-        payload = {}
-        headers = get_headers_marktguru()
-        response = requests.get(url, headers=headers, data=payload)
-    
-        data = response.json()
-        results = data["results"]
-        extracted_data.append((id, product, results))
+        response = requests.get(url, headers=headers, data={})
+        data = response.json()["results"]
+        extracted_data.append((id, product, data))
     return extracted_data
 
 
@@ -46,7 +44,7 @@ def gather_info_from_data(extracted_data: list) -> dict:
             preis = market["price"]
             alter_preis = market["oldPrice"]
             referenz_preis = market["referencePrice"]
-            requiresLoyaltyMembership =  market["requiresLoyaltyMembership"]
+            requiresLoyaltyMembership =  market["requiresLoyalityMembership"] # typo in API
 
             date_string = market["validityDates"][0]["from"][:10]
             gültig_von_dateobj =  datetime.strptime(date_string, '%Y-%m-%d') + timedelta(days=1)
@@ -76,25 +74,23 @@ def gather_info_from_data(extracted_data: list) -> dict:
     return dict_angebote
 
 
-
-def new_offers_available() -> Tuple[bool, dict, dict]:
-    known_users = load_users()
-    urls_to_scrape = gather_urls(known_users)
+def get_new_offers() -> Tuple[bool, dict, dict]:
+    users = load_users()
+    urls_to_scrape = gather_urls(users)
     extracted_data = gather_data_from_urls(urls_to_scrape)
     dict_angebote = gather_info_from_data(extracted_data)
-    # new offers available?
-    dict_angebote_ALT = load_offers()
+    return dict_angebote, users
 
-    diffs = dict_diff(dict1=dict_angebote_ALT, dict2=dict_angebote)
 
-    new_offers_available = bool(diffs)
+def new_offers_available() -> Tuple[bool, dict, dict]:
+    current_offers, users = get_new_offers()
+    old_offers = load_offers()
 
-    if not new_offers_available:
-        # no new offers. dont do anything
-        return False, diffs, known_users
-    
-    # new offers!
-    save_offers(dict_angebote)
-    return True, diffs, known_users
+    changed_offers = dict_diff(dict1=current_offers, dict2=old_offers)
+    if not changed_offers:
+        return False, changed_offers, users
+    save_offers(current_offers)
+    return True, changed_offers, users
+
 
 

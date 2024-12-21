@@ -3,7 +3,7 @@ from typing import Literal
 from telegram import Update
 from sqlalchemy.orm import sessionmaker
 
-from database.models import User as UserModel, engine
+from database.models import UserModel, engine
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -46,13 +46,13 @@ class User():
             'products': self.products
         }
 
-def save_updates(id, to_update: str, updating):
+def save_updates(id: int, to_update: str, updating):
     user = session.query(UserModel).filter_by(id=id).first()
     if user:
         setattr(user, to_update, json.dumps(updating) if isinstance(updating, list) else updating)
         session.commit()
 
-def load_users() -> dict:
+def load_users() -> dict[int, User]:
     users = session.query(UserModel).all()
     return {user.id: User(
         id=user.id,

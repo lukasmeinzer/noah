@@ -90,16 +90,9 @@ def save_user(user: User):
     session.commit()
 
 async def check_for_user(update: Update) -> User | None:
-    user = session.query(UserModel).filter_by(id=update.effective_user.id).first()
+    user = load_user(id=update.effective_user.id)
     if user:
-        return User(
-            id=user.id,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            zip_code=user.zip_code,
-            markets=json.loads(user.markets),
-            products=json.loads(user.products)
-        )
+        return user
     else:
         await update.message.reply_text("Du bist noch nicht registriert. Bitte führe /start aus.")
         return None

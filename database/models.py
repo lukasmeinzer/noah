@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, BigInteger, String, Text, Date, Boolean, ForeignKey, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
+import os
 
 Base = declarative_base()
 
@@ -39,7 +40,9 @@ class Feedback(Base):
     timestamp = Column(String(50))  # Specify length
     feedback = Column(Text)
 
-DATABASE_URL = "mysql://root:root@87.106.165.63/noah"
+
+if os.getenv("DATABASE_URL"):
+    DATABASE_URL = os.getenv("DATABASE_URL")
 engine = create_engine(DATABASE_URL)
 Session = sessionmaker(bind=engine)
 session = Session()

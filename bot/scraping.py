@@ -4,7 +4,7 @@ import re
 from typing import Tuple
 
 from bot.utils import get_headers_marktguru, dict_diff
-from bot.user import load_users
+from bot.user import load_users, User
 from bot.offer import load_offers, save_offers
 
 
@@ -74,8 +74,9 @@ def gather_info_from_data(extracted_data: list) -> dict:
     return dict_angebote
 
 
-def get_new_offers() -> Tuple[bool, dict, dict]:
-    users = load_users()
+def get_new_offers(users: dict[int, User]) -> Tuple[bool, dict, dict]:
+    if not users:
+        users = load_users()
     urls_to_scrape = gather_urls(users)
     extracted_data = gather_data_from_urls(urls_to_scrape)
     dict_angebote = gather_info_from_data(extracted_data)

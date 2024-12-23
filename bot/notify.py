@@ -1,6 +1,39 @@
 import requests
 
-from bot.scraping import new_offers_available
+from bot.scraping import new_offers_available, get_new_offers
+from bot.user import User
+
+def notify_single_user_with_current_offers(user: User, TOKEN: str):
+    current_offers, _ = get_new_offers(users={user.id: user})
+    
+    
+    url_sendText = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+    url_sendPhoto = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
+
+    for supermarkt, angebote in current_offers.items():
+        old_product = angebote["gesuchtes_produkt"].lower()
+        produkt_noch_valide = old_product in user.products
+        supermarkt_valide = any(m.lower() in [market.lower() for market in user.markets] for m in supermarkt.split(" "))
+        if not produkt_noch_valide:
+            continue
+        if not supermarkt_valide:
+            continue
+        text_gesamt = create_newOffer_text(supermarkt, angebote) 
+        requests.post(
+            url_sendText, 
+            data={
+                "chat_id": user.id, 
+                "text": text_gesamt
+            },
+        )
+        requests.post(
+            url_sendPhoto, 
+            data={
+                "chat_id": user.id, 
+                "photo": angebote["image"]
+            },
+        )
+    
 
 def notify_users_with_new_offers(TOKEN: str):
     noa, diffs, users = new_offers_available()
@@ -46,7 +79,7 @@ def notify_users_with_new_offers(TOKEN: str):
                 break
             if not supermarkt_valide:
                 break
-            text_gesamt = create_newOffer_text(supermarkt, changes) 
+            text_gesamt = create_newOffer_text(supermarkt, changes["to"]) 
             requests.post(
                 url_sendText, 
                 data={
@@ -64,7 +97,7 @@ def notify_users_with_new_offers(TOKEN: str):
             
 
 def create_newOffer_text(supermarkt: str, changes: dict) -> str:
-    _, _, beschreibung, preis, alter_preis, _, requiresLoyaltyMembership, gültig_von, gültig_bis, produkt, _ = changes["to"].values()
+    _, _, beschreibung, preis, alter_preis, _, requiresLoyaltyMembership, gültig_von, gültig_bis, produkt, _ = changes.values()
 
     text_header = f"{produkt} bei {supermarkt.upper()} im Angebot! \n" 
     text_preis = (

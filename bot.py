@@ -52,6 +52,7 @@ def main():
     application.add_handler(CommandHandler("del_products", commands.del_products))
     application.add_handler(CommandHandler("del_markets", commands.del_markets))
     application.add_handler(CommandHandler("feedback", commands.feedback))
+    application.add_handler(CommandHandler("notify_now", commands.notify_now))
     
     # Täglich nach neuen Angeboten suchen und Nutzer benachrichtigen
     scheduler = BackgroundScheduler()

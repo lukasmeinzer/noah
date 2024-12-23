@@ -23,9 +23,13 @@ def notify_users_with_new_offers(TOKEN: str):
             user_id = changes['from']["user_id"]
             old_product = changes['from']["gesuchtes_produkt"].lower()
             produkt_noch_valide = old_product in users[user_id].products
+            supermarkt_valide = any(m.lower() in [market.lower() for market in users[user_id].markets] for m in supermarkt.split(" "))
             if not produkt_noch_valide:
                 break
+            if not supermarkt_valide:
+                break
             text = f"Hinweis: {supermarkt.upper()} hat Produkt {changes['from']['gefundenes_produkt']} nicht mehr im Angebot."
+            print("Nachricht an User", user_id, "gesendet.")
             requests.post(
                 url_sendText, 
                 data={
@@ -37,10 +41,12 @@ def notify_users_with_new_offers(TOKEN: str):
             user_id = changes['to']["user_id"]
             new_product = changes['to']["gesuchtes_produkt"].lower()
             produkt_noch_valide = new_product in users[user_id].products
+            supermarkt_valide = any(m.lower() in [market.lower() for market in users[user_id].markets] for m in supermarkt.split(" "))
             if not produkt_noch_valide:
                 break
+            if not supermarkt_valide:
+                break
             text_gesamt = create_newOffer_text(supermarkt, changes) 
-        
             requests.post(
                 url_sendText, 
                 data={

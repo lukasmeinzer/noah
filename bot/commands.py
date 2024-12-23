@@ -2,7 +2,8 @@ import json
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from bot.user import User, load_users, save_user, check_for_user, load_user
+from bot.notify import notify_users_with_new_offers
+from bot.user import User, save_user, check_for_user, load_user
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -32,6 +33,12 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(str_reply)
 
 
+async def notify_now(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = await check_for_user(update)
+    if user is None: return
+    
+    await notify_users_with_new_offers(context.bot, user.id)
+
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "Dieser Bot wird dich benachrichtigen, sobald deine Lieblingsprodukte im Angebot sind. \n\n" \
@@ -53,7 +60,8 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/add_markets - Supermärkte zur Watchlist hinzufügen \n" \
         "/del_markets - Supermärkte von der Watchlist entfernen \n" \
         "/show_me - Zeige meinen Konfigurationsstand \n"
-        "/feedback - Anonymes Feedback abgeben \n ")
+        "/feedback - Anonymes Feedback abgeben \n "
+        "/notify_now - Benachrichtige mich jetzt über neue Angebote \n")
     
 
 async def feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

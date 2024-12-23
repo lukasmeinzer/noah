@@ -3,7 +3,6 @@ name = "noah"
 version = "0.1.0"
 description = "Benachrichtigt Leute bei Angeboten"
 authors = ["lukas <lukas.meinzer.98@web.de>"]
-package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.10"

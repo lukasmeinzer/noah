@@ -23,7 +23,7 @@ jobs:
           cd git_local/noah
           git pull
           docker compose down || true
-          docker compose up -d --build --force-recreate
+          docker compose up -d --build
         EOF
     env:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

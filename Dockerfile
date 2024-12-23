@@ -2,8 +2,6 @@ FROM python:3.10
 
 ENV PATH="/root/.local/bin:$PATH"
 
-
-WORKDIR /app
 RUN pip install --no-cache-dir poetry
 
 
@@ -11,7 +9,7 @@ RUN pip install --no-cache-dir poetry
 COPY pyproject.toml poetry.lock ./
 RUN poetry install 
 
-COPY . /app/
+COPY . .
 
 # Command to run the bot
 CMD ["poetry", "run", "python", "bot.py"]

@@ -3,7 +3,6 @@ import requests
 from bot.scraping import new_offers_available
 
 def notify_users_with_new_offers(TOKEN: str):
-    # hier weiter arbeiten... Offer fetching funktioniert noch nicht so gut gerade
     noa, diffs, users = new_offers_available()
     if not noa:
         # nothing to notify

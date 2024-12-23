@@ -22,8 +22,8 @@ jobs:
         ssh -o StrictHostKeyChecking=no root@${{ secrets.SERVER_IP }} << EOF
           cd git_local/noah
           git pull
-          docker-compose down || true
-          docker-compose up -d --build --force-recreate
+          docker compose down || true
+          docker compose up -d --build --force-recreate
         EOF
     env:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}

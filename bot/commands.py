@@ -2,15 +2,15 @@ import json
 from telegram import Update
 from telegram.ext import ContextTypes
 
-from user import User, load_users, save_users, check_for_user
+from bot.user import User, load_users, save_user, check_for_user, load_user
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
-    known_users = load_users()
+    user = load_user(id=update.effective_user.id)
     
     # new user
-    if str(update.effective_user.id) not in known_users:
+    if user is None:
         user = User(
             id=update.effective_user.id,
             first_name=update.effective_user.first_name,
@@ -19,16 +19,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             markets=None,
             products=None,
         )
-        known_users[user.id] = user.to_dict()
-        save_users(known_users)
+        save_user(user)
         str_reply = f"Hi {user.first_name}, schön dich zu sehen :) \n" \
             "Du bist scheinbar zum ersten Mal hier! Mit /about erfährst du was dieser Bot kann. \n" \
             "Mit /help siehst du alle verfügbaren Kommandos. \n" \
             "Am Anfang ist es auch sinnvoll, deine Postleitzahl mit /set_zip anzugeben"
     # known user
     else: 
-        user_data = known_users[str(update.effective_user.id)]
-        user = User(**user_data) 
         str_reply = f"Hi {user.first_name}, schön dich zu sehen :) \n" \
             "Mit /help siehst du alle verfügbaren Kommandos."
         
@@ -53,8 +50,8 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/set_zip - Postleitzahl konfigurieren \n" \
         "/add_products - Produkte zur Watchlist hinzufügen \n" \
         "/del_products - Produkte von der Watchlist entfernen \n" \
-        "/add_markets - Supermärkte zur Watchlist hinzufügen (Disclaimer: noch nicht funktionsfähig) \n" \
-        "/del_markets - Supermärkte von der Watchlist entfernen (Disclaimer: noch nicht funktionsfähig) \n" \
+        "/add_markets - Supermärkte zur Watchlist hinzufügen \n" \
+        "/del_markets - Supermärkte von der Watchlist entfernen \n" \
         "/show_me - Zeige meinen Konfigurationsstand \n"
         "/feedback - Anonymes Feedback abgeben \n ")
     

@@ -351,6 +351,14 @@ python-versions = ">=3.8"
 traitlets = "*"
 
 [[package]]
+name = "mysqlclient"
+version = "2.2.6"
+description = "Python interface to MySQL"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[[package]]
 name = "nest-asyncio"
 version = "1.6.0"
 description = "Patch asyncio to allow nested event loops"
@@ -747,7 +755,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "4b53d1a33c91048b236c38c183b947f54db4c978bd4c12d4feb3e8c343cd3f56"
+content-hash = "1d70566415248a99c97a9cc4d1aa6d947c2cf82be14bb87bdaf17d4e7f35468c"
 
 [metadata.files]
 anyio = []
@@ -774,6 +782,7 @@ jedi = []
 jupyter-client = []
 jupyter-core = []
 matplotlib-inline = []
+mysqlclient = []
 nest-asyncio = []
 numpy = []
 packaging = []

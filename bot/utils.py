@@ -1,6 +1,5 @@
 import os
 import requests
-import json
 
 
 def get_updates_easy():
@@ -12,7 +11,7 @@ def get_updates_easy():
     updates = response.json()
 
 
-def get_headers_marktguru():
+def get_headers_marktguru() -> dict:
     return {
         'X-ClientKey': 'hHASZX6oiDywTGnEUxx4PAdU0nWbyHi+0hkaVivc4aM=',
         'sec-ch-ua': '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
@@ -26,22 +25,9 @@ def get_headers_marktguru():
     }
 
 
-def save_offers(dict_angebote: dict):
-    with open("offers.json", "w", encoding="utf-8") as f:
-        json.dump(dict_angebote, f, ensure_ascii=False, indent=4)
-
-def load_offers() -> dict:
-    try:
-        with open("offers.json", "r") as f:
-            known_users = json.load(f)
-    except KeyError as e:
-        print("Keine offers.json vorhanden.")
-    return known_users
-
-
 def dict_diff(dict1: dict, dict2: dict) -> dict: 
     """
-    Vergleiche zwei dicts und gib ein dict mit den Änderungen zurück
+    Compare two dicts and return a dict with the changes
     """
     diff = {}
 
@@ -55,7 +41,11 @@ def dict_diff(dict1: dict, dict2: dict) -> dict:
 
     # Find keys present in both but with different values
     for key in dict1.keys() & dict2.keys():
-        if dict1[key] != dict2[key]:
+        if key == "image": # Skip image key as it is not relevant for the comparison
+            continue
+        dict1_value = dict1[key].lower() if isinstance(dict1[key], str) else dict1[key]
+        dict2_value = dict2[key].lower() if isinstance(dict2[key], str) else dict2[key]
+        if dict1_value != dict2_value:
             diff[key] = {"from": dict1[key], "to": dict2[key]}
             
     return diff

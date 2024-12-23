@@ -4,34 +4,36 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from apscheduler.schedulers.background import BackgroundScheduler
 
-import commands
-from user_input import (
+from bot import commands
+from bot.user_input import (
     handle_product_input, 
     handle_zip_code_input, 
     handle_market_input,
     handle_feedback,
 )
-from notify import notify_users_with_new_offers
+from bot.notify import notify_users_with_new_offers
 
 
 async def handle_no_command_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if "giving_feedback" in context.user_data and context.user_data["giving_feedback"]:
         await handle_feedback(update, context)
         
-    if "adding_products" in context.user_data and context.user_data["adding_products"]:
+    elif "adding_products" in context.user_data and context.user_data["adding_products"]:
         await handle_product_input("add", update, context)
         
-    if "deleting_products" in context.user_data and context.user_data["deleting_products"]:
+    elif "deleting_products" in context.user_data and context.user_data["deleting_products"]:
         await handle_product_input("delete", update, context)
         
-    if "adding_markets" in context.user_data and context.user_data["adding_markets"]:
+    elif "adding_markets" in context.user_data and context.user_data["adding_markets"]:
         await handle_market_input("add", update, context)
         
-    if "deleting_markets" in context.user_data and context.user_data["deleting_markets"]:
+    elif "deleting_markets" in context.user_data and context.user_data["deleting_markets"]:
         await handle_market_input("delete", update, context)
         
-    if "setting_zip_code" in context.user_data and context.user_data["setting_zip_code"]:
+    elif "setting_zip_code" in context.user_data and context.user_data["setting_zip_code"]:
         await handle_zip_code_input(update, context)
+    else:
+        await update.message.reply_text("/start oder /help eingeben, um zu beginnen.")
 
 
 def main():

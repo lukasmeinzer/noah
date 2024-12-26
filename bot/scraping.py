@@ -90,7 +90,7 @@ def get_new_offers(users: dict[int, User] | None = None) -> Tuple[bool, dict, di
 def new_offers_available() -> Tuple[bool, dict, dict]:
     current_offers, users = get_new_offers()
     old_offers = load_offers()
-    if old_offers[None]:
+    if None in old_offers:
         del old_offers[None]
 
     changed_offers = dict_diff(dict1=current_offers, dict2=old_offers)

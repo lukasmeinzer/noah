@@ -27,28 +27,28 @@ def get_headers_marktguru() -> dict:
     }
 
 
-def dict_diff(dict1: dict, dict2: dict) -> dict: 
+def dict_diff(from_: dict, to: dict) -> dict: 
     """
     Compare two dicts and return a dict with the changes
     """
     diff = {}
 
-    # Find keys present in dict1 but not in dict2
-    for key in dict1.keys() - dict2.keys():
-        diff[key] = {"from": dict1[key], "to": None}
+    # Find keys present in from_ but not in to
+    for key in from_.keys() - to.keys():
+        diff[key] = {"from": from_[key], "to": None}
 
-    # Find keys present in dict2 but not in dict1
-    for key in dict2.keys() - dict1.keys():
-        diff[key] = {"from": None, "to": dict2[key]}
+    # Find keys present in to but not in from_
+    for key in to.keys() - from_.keys():
+        diff[key] = {"from": None, "to": to[key]}
 
     # Find keys present in both but with different values
-    for key in dict1.keys() & dict2.keys():
+    for key in from_.keys() & to.keys():
         if key == "image": # Skip image key as it is not relevant for the comparison
             continue
-        dict1_value = dict1[key].lower() if isinstance(dict1[key], str) else dict1[key]
-        dict2_value = dict2[key].lower() if isinstance(dict2[key], str) else dict2[key]
-        if dict1_value != dict2_value:
-            diff[key] = {"from": dict1[key], "to": dict2[key]}
+        from__value = {k: str(v).lower() for k, v in from_[key].items()}
+        to_value = {k: str(v).lower() for k, v in to[key].items()}
+        if from__value != to_value:
+            diff[key] = {"from": from_[key], "to": to[key]}
             
     return diff
 

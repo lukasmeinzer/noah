@@ -132,5 +132,5 @@ async def show_me(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = await check_for_user(update)
     if user is None: return
     
-    formatted_user = json.dumps(user.to_dict(), indent=4)
+    formatted_user = json.dumps(user.to_dict(), indent=4, ensure_ascii=False)
     await update.message.reply_text(formatted_user)

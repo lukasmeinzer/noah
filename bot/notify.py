@@ -12,10 +12,11 @@ def notify_single_user_with_current_offers(user: User, TOKEN: str):
     url_sendPhoto = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
 
     for supermarkt, angebote in current_offers.items():
+        supermarkt = angebote["supermarkt"]
         valide: bool = supermarkt_und_angebot_valide(user, angebote, supermarkt)
         if not valide:
             continue
-        text_gesamt = create_newOffer_text(supermarkt, angebote) 
+        text_gesamt = create_newOffer_text(angebote) 
         requests.post(
             url_sendText, 
             data={
@@ -44,19 +45,23 @@ def notify_users_with_new_offers(TOKEN: str):
     
     # Die richtigen IDs müssen mit den entsprechenden Produkten benachrichtigt werden
     # Allerdings nur, wenn sich auch wirklich bei ihren eigenen Produkten was geändert hat.
-    for supermarkt, changes in diffs.items():
+    for _, changes in diffs.items():
         case_oldOffer = changes["to"] is None
         case_newOffer = changes["to"] is not None # triggered auch bei Updates
+        if case_newOffer:
+            angebote = changes['to']
+        else:
+            angebote = changes['from']
+        
+        supermarkt = angebote["supermarkt"]
+        user_id = angebote["user_id"]
+        user = users[user_id]
+        valide: bool = supermarkt_und_angebot_valide(user, angebote, supermarkt)
+        if not valide:
+            continue
         
         if case_oldOffer:
-            user_id = changes['from']["user_id"]
-            user = users[user_id]
-            angebote = changes['from']
-            valide: bool = supermarkt_und_angebot_valide(user, angebote, supermarkt)
-            if not valide:
-                break
-            text = f"Hinweis: {supermarkt.upper()} hat Produkt {changes['from']['gefundenes_produkt']} nicht mehr im Angebot."
-            print("Nachricht an User", user_id, "gesendet.")
+            text = f"Hinweis: {supermarkt.upper()} hat Produkt {angebote['gefundenes_produkt']} nicht mehr im Angebot."
             requests.post(
                 url_sendText, 
                 data={
@@ -65,13 +70,7 @@ def notify_users_with_new_offers(TOKEN: str):
                 },
             )
         if case_newOffer:
-            user_id = changes['to']["user_id"]
-            user = users[user_id]
-            angebote = changes['to']
-            valide: bool = supermarkt_und_angebot_valide(user, angebote, supermarkt)
-            if not valide:
-                break
-            text_gesamt = create_newOffer_text(supermarkt, changes["to"]) 
+            text_gesamt = create_newOffer_text(changes["to"]) 
             requests.post(
                 url_sendText, 
                 data={
@@ -88,8 +87,8 @@ def notify_users_with_new_offers(TOKEN: str):
             )
             
 
-def create_newOffer_text(supermarkt: str, changes: dict) -> str:
-    _, _, beschreibung, preis, alter_preis, _, requiresLoyaltyMembership, gültig_von, gültig_bis, produkt, _ = changes.values()
+def create_newOffer_text(changes: dict) -> str:
+    _, _, supermarkt, beschreibung, preis, alter_preis, _, requiresLoyaltyMembership, gültig_von, gültig_bis, produkt, _ = changes.values()
 
     text_header = f"{produkt} bei {supermarkt.upper()} im Angebot! \n" 
     text_preis = (

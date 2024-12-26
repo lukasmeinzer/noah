@@ -1,11 +1,10 @@
 import requests
 from datetime import timedelta, datetime
-import re
 from typing import Tuple
 
 from bot.utils import get_headers_marktguru, dict_diff
 from bot.user import load_users, User
-from bot.offer import load_offers, save_offers
+from bot.offer import load_offers, replace_offers
 
 
 # Für welche Users muss ich welche Urls scrapen?
@@ -41,7 +40,8 @@ def gather_data_from_urls(urls_to_scrape: list) -> list:
 # richtige Infos raussuchen und Angebote in json speichern
 def gather_info_from_data(extracted_data: list) -> dict:
     dict_angebote = dict()
-    for id, product, data in extracted_data:
+    for i, _unpack in enumerate(extracted_data):
+        user_id, product, data = _unpack
         for market in data:
             supermarkt = market["advertisers"][0]["name"]
             beschreibung = market["description"]
@@ -61,19 +61,20 @@ def gather_info_from_data(extracted_data: list) -> dict:
             gefundenes_produkt = market["product"]["name"]
             image = f"https://mg2de.b-cdn.net/api/v1/offers/{market['id']}/images/default/0/small.webp"
 
-            dict_angebote[supermarkt] = {
-            "gesuchtes_produkt": product,
-            "user_id": id,
-            "beschreibung": beschreibung,
-            "preis": preis,
-            "alter_preis": alter_preis,
-            "referenz_preis": referenz_preis,
-            "requiresLoyaltyMembership": requiresLoyaltyMembership,
-            "gültig_von": gültig_von,
-            "gültig_bis": gültig_bis,
-            "gefundenes_produkt": gefundenes_produkt,
-            "image": image,
-        }
+            dict_angebote[f"{supermarkt}_{gefundenes_produkt}_{user_id}"] = {
+                "gesuchtes_produkt": product,
+                "user_id": user_id,
+                "supermarkt": supermarkt,
+                "beschreibung": beschreibung,
+                "preis": preis,
+                "alter_preis": alter_preis,
+                "referenz_preis": referenz_preis,
+                "requiresLoyaltyMembership": requiresLoyaltyMembership,
+                "gültig_von": gültig_von,
+                "gültig_bis": gültig_bis,
+                "gefundenes_produkt": gefundenes_produkt,
+                "image": image,
+            }
             
     return dict_angebote
 
@@ -93,10 +94,10 @@ def new_offers_available() -> Tuple[bool, dict, dict]:
     if None in old_offers:
         del old_offers[None]
 
-    changed_offers = dict_diff(dict1=current_offers, dict2=old_offers)
+    changed_offers = dict_diff(from_=old_offers, to=current_offers)
     if not changed_offers:
         return False, changed_offers, users
-    save_offers(current_offers)
+    replace_offers(current_offers)
     return True, changed_offers, users
 
 

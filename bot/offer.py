@@ -41,20 +41,30 @@ class Offer:
             "gefundenes_produkt": self.gefundenes_produkt,
             "image": self.image
         }
-        
-        
 
+# für flüchtige Tabelle
+def replace_offers(dict_angebote: dict):
+    session.query(OfferModel).delete()
+    
+    for _, offer_data in dict_angebote.items():
+        offer = OfferModel(**offer_data)
+        session.add(offer)
+    
+    session.commit()
+
+# für persistente Tabelle
 def save_offers(dict_angebote: dict):
-    for supermarkt, offer_data in dict_angebote.items():
-        offer = OfferModel(supermarkt=supermarkt, **offer_data)
+    for _, offer_data in dict_angebote.items():
+        offer = OfferModel(**offer_data)
         session.add(offer)
     session.commit()
 
 def load_offers() -> dict:
     offers = session.query(OfferModel).all()
     return {
-        offer.supermarkt: {
+        f"{offer.supermarkt}_{offer.gefundenes_produkt}_{offer.user_id}": {
             "user_id": offer.user_id,
+            "supermarkt": offer.supermarkt,
             "gesuchtes_produkt": offer.gesuchtes_produkt,
             "beschreibung": offer.beschreibung,
             "preis": offer.preis,

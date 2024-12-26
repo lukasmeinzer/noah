@@ -45,8 +45,8 @@ class Offer:
         
 
 def save_offers(dict_angebote: dict):
-    for _, offer_data in dict_angebote.items():
-        offer = OfferModel(**offer_data)
+    for supermarkt, offer_data in dict_angebote.items():
+        offer = OfferModel(supermarkt=supermarkt, **offer_data)
         session.add(offer)
     session.commit()
 

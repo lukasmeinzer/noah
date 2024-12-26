@@ -40,8 +40,7 @@ def gather_data_from_urls(urls_to_scrape: list) -> list:
 # richtige Infos raussuchen und Angebote in json speichern
 def gather_info_from_data(extracted_data: list) -> dict:
     dict_angebote = dict()
-    for i, _unpack in enumerate(extracted_data):
-        user_id, product, data = _unpack
+    for user_id, product, data in extracted_data:
         for market in data:
             supermarkt = market["advertisers"][0]["name"]
             beschreibung = market["description"]

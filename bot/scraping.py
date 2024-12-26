@@ -78,7 +78,7 @@ def gather_info_from_data(extracted_data: list) -> dict:
     return dict_angebote
 
 
-def get_new_offers(users: dict[int, User]) -> Tuple[bool, dict, dict]:
+def get_new_offers(users: dict[int, User] | None = None) -> Tuple[bool, dict, dict]:
     if not users:
         users = load_users()
     urls_to_scrape = gather_urls(users)

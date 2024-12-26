@@ -2,6 +2,7 @@ import requests
 
 from bot.scraping import new_offers_available, get_new_offers
 from bot.user import User
+from bot.utils import supermarkt_und_angebot_valide
 
 def notify_single_user_with_current_offers(user: User, TOKEN: str):
     current_offers, _ = get_new_offers(users={user.id: user})
@@ -11,12 +12,8 @@ def notify_single_user_with_current_offers(user: User, TOKEN: str):
     url_sendPhoto = f"https://api.telegram.org/bot{TOKEN}/sendPhoto"
 
     for supermarkt, angebote in current_offers.items():
-        old_product = angebote["gesuchtes_produkt"].lower()
-        produkt_noch_valide = old_product in user.products
-        supermarkt_valide = any(m.lower() in [market.lower() for market in user.markets] for m in supermarkt.split(" "))
-        if not produkt_noch_valide:
-            continue
-        if not supermarkt_valide:
+        valide: bool = supermarkt_und_angebot_valide(user, angebote, supermarkt)
+        if not valide:
             continue
         text_gesamt = create_newOffer_text(supermarkt, angebote) 
         requests.post(
@@ -33,7 +30,6 @@ def notify_single_user_with_current_offers(user: User, TOKEN: str):
                 "photo": angebote["image"]
             },
         )
-    
 
 def notify_users_with_new_offers(TOKEN: str):
     noa, diffs, users = new_offers_available()
@@ -54,12 +50,10 @@ def notify_users_with_new_offers(TOKEN: str):
         
         if case_oldOffer:
             user_id = changes['from']["user_id"]
-            old_product = changes['from']["gesuchtes_produkt"].lower()
-            produkt_noch_valide = old_product in users[user_id].products
-            supermarkt_valide = any(m.lower() in [market.lower() for market in users[user_id].markets] for m in supermarkt.split(" "))
-            if not produkt_noch_valide:
-                break
-            if not supermarkt_valide:
+            user = users[user_id]
+            angebote = changes['from']
+            valide: bool = supermarkt_und_angebot_valide(user, angebote, supermarkt)
+            if not valide:
                 break
             text = f"Hinweis: {supermarkt.upper()} hat Produkt {changes['from']['gefundenes_produkt']} nicht mehr im Angebot."
             print("Nachricht an User", user_id, "gesendet.")
@@ -72,12 +66,10 @@ def notify_users_with_new_offers(TOKEN: str):
             )
         if case_newOffer:
             user_id = changes['to']["user_id"]
-            new_product = changes['to']["gesuchtes_produkt"].lower()
-            produkt_noch_valide = new_product in users[user_id].products
-            supermarkt_valide = any(m.lower() in [market.lower() for market in users[user_id].markets] for m in supermarkt.split(" "))
-            if not produkt_noch_valide:
-                break
-            if not supermarkt_valide:
+            user = users[user_id]
+            angebote = changes['to']
+            valide: bool = supermarkt_und_angebot_valide(user, angebote, supermarkt)
+            if not valide:
                 break
             text_gesamt = create_newOffer_text(supermarkt, changes["to"]) 
             requests.post(

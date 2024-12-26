@@ -1,6 +1,8 @@
 import os
 import requests
 
+from bot.user import User
+
 
 def get_updates_easy():
     TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -49,3 +51,13 @@ def dict_diff(dict1: dict, dict2: dict) -> dict:
             diff[key] = {"from": dict1[key], "to": dict2[key]}
             
     return diff
+
+def supermarkt_und_angebot_valide(user: User, angebote: dict, supermarkt: str) -> bool:
+    produkt_valide = angebote["gesuchtes_produkt"].lower() in user.products
+    
+    if (user.markets is None) or (len(user.markets) == 0):
+        supermarkt_valide = True
+    else:
+        supermarkt_valide = any(m.lower() in [market.lower() for market in user.markets] for m in supermarkt.split(" "))
+    
+    return produkt_valide and supermarkt_valide

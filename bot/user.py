@@ -50,7 +50,7 @@ def save_updates(id: int, to_update: str, updating):
     user = session.query(UserModel).filter_by(id=id).first()
     if user:
         setattr(user, to_update, json.dumps(updating, ensure_ascii=False) if isinstance(updating, list) else updating)
-        session.commit()
+        session.commit() 
 
 def load_users() -> dict[int, User]:
     users = session.query(UserModel).all()

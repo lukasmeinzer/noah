@@ -1,6 +1,7 @@
 import json
 from telegram import Update
 from telegram.ext import ContextTypes
+import asyncio
 
 from bot.notify import notify_single_user_with_current_offers
 from bot.user import User, save_user, check_for_user, load_user
@@ -36,8 +37,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def notify_now(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = await check_for_user(update)
     if user is None: return
-    
-    await notify_single_user_with_current_offers(user, context.application.bot.token)
+
+    notify_single_user_with_current_offers(user, context.application.bot.token)
+    await asyncio.sleep(0)
 
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(

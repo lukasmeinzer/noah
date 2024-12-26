@@ -11,12 +11,16 @@ from bot.offer import load_offers, save_offers
 # Für welche Users muss ich welche Urls scrapen?
 def gather_urls(known_users: dict) -> list:
     urls_to_scrape = list()
+    dict_replace = {
+        "&": "%26",
+        " ": "%20",
+    }
     for id, user in known_users.items():
         zip_code = user.zip_code
         products = user.products
         for product in products:
-            search_term_product = re.sub("[^A-Za-z0-9 ]+", "", product)
-            search_term_product = search_term_product.replace(" ", "%20").lower()
+            translation_table = str.maketrans(dict_replace)
+            search_term_product = product.translate(translation_table).lower()
             url = f"https://api.marktguru.de/api/v1/offers/search?as=web&limit=24&offset=0&q={search_term_product}&zipCode={zip_code}"
             urls_to_scrape.append((id, product, url))
     return urls_to_scrape

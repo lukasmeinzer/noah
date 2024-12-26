@@ -49,7 +49,7 @@ class User():
 def save_updates(id: int, to_update: str, updating):
     user = session.query(UserModel).filter_by(id=id).first()
     if user:
-        setattr(user, to_update, json.dumps(updating) if isinstance(updating, list) else updating)
+        setattr(user, to_update, json.dumps(updating, ensure_ascii=False) if isinstance(updating, list) else updating)
         session.commit()
 
 def load_users() -> dict[int, User]:
@@ -83,8 +83,8 @@ def save_user(user: User):
         first_name=user_data['first_name'],
         last_name=user_data['last_name'],
         zip_code=user_data['zip_code'],
-        markets=json.dumps(user_data['markets']),
-        products=json.dumps(user_data['products'])
+        markets=json.dumps(user_data["markets"], ensure_ascii=False),
+        products=json.dumps(user_data["products"], ensure_ascii=False)
     )
     session.add(new_user)
     session.commit()

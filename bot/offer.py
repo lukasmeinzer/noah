@@ -54,7 +54,7 @@ def save_offers(dict_angebote: dict):
     for _, offer_data in dict_angebote.items():
         for key, value in offer_data.items():
             if isinstance(value, str):
-                offer_data[key] = json.dumps(value, ensure_ascii=False)
+                offer_data[key] = value.encode('utf-8').decode('utf-8')
         
         offer = OfferModel(**offer_data)
         session.add(offer)

@@ -35,7 +35,10 @@ async def handle_zip_code_input(update: Update, context: ContextTypes.DEFAULT_TY
     
     context.user_data["setting_zip_code"] = False
     
-    await update.message.reply_text(f"PLZ erfolgreich hinterlegt.")
+    message = f"PLZ erfolgreich hinterlegt."
+    if "new_user" in context.user_data and context.user_data["new_user"]:
+        message += " Füge jetzt mit /add_products deine Lieblingsprodukte zur Watchlist hinzu."
+    await update.message.reply_text(message)
         
         
 async def handle_product_input(update_method: Literal["add", "delete"], update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -50,8 +53,11 @@ async def handle_product_input(update_method: Literal["add", "delete"], update: 
     context.user_data["adding_products"] = False
     context.user_data["deleting_products"] = False
 
-    await update.message.reply_text(
-        f"Folgende Produkte wurden {'hinzugefügt' if update_method == 'add' else 'gelöscht'}: {', '.join(products)}")
+    message = f"Folgende Produkte wurden {'hinzugefügt' if update_method == 'add' else 'gelöscht'}: {', '.join(products)}"
+    if "new_user" in context.user_data and context.user_data["new_user"]:
+        context.user_data["new_user"] = False
+        message += " Optional kannst du mit /add_markets deine Lieblingssupermärkte zur Watchlist hinzufügen. Wenn du erstmal keine Auswahl treffen willst, wirst du für alle Supermärkte benachrichtigt."
+    await update.message.reply_text(message)
 
 
 async def handle_market_input(update_method: Literal["add", "delete"], update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

@@ -13,6 +13,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
     # new user
     if user is None:
+        context.user_data["new_user"] = True
         user = User(
             id=update.effective_user.id,
             first_name=update.effective_user.first_name,
@@ -47,7 +48,8 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "Du wirst für alle Produkte auf deiner Watchlist benachrichtigt, " \
         "allerdings nur, wenn sie auch bei Supermärkten auf deiner Watchlist im Angebot sind. \n" \
         "Wenn du noch keine Supermärkte eingetragen hast, wirst du standardmäßig für alle "\
-        "Supermärkte benachrichtigt.")
+        "Supermärkte benachrichtigt. Deinen aktuellen Konfigurationsstand kannst du mit /show_me einsehen. \n\n" \
+    )
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:

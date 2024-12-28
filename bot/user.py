@@ -53,19 +53,24 @@ def save_updates(id: int, to_update: str, updating):
         session.commit() 
 
 def load_users() -> dict[int, User]:
-    users = session.query(UserModel).all()
-    return {user.id: User(
-        id=user.id,
-        first_name=user.first_name,
-        last_name=user.last_name,
-        zip_code=user.zip_code,
-        markets=json.loads(user.markets),
-        products=json.loads(user.products)
-    ) for user in users}
+    try:
+        users = session.query(UserModel).all()
+        return {user.id: User(
+            id=user.id,
+            first_name=user.first_name,
+            last_name=user.last_name,
+            zip_code=user.zip_code,
+            markets=json.loads(user.markets),
+            products=json.loads(user.products)
+        ) for user in users}
+    except:
+        session.rollback()
+        print("Error loading users")
+        raise
     
 def load_user(id: int) -> User | None:
-    user = session.query(UserModel).filter_by(id=id).first()
-    if user:
+    try:
+        user = session.query(UserModel).filter_by(id=id).first()
         return User(
             id=user.id,
             first_name=user.first_name,
@@ -74,7 +79,10 @@ def load_user(id: int) -> User | None:
             markets=json.loads(user.markets),
             products=json.loads(user.products)
         )
-    return None
+    except:
+        session.rollback()
+        print("Error loading user")
+        return None
 
 def save_user(user: User):
     user_data = user.to_dict()

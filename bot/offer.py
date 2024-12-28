@@ -1,4 +1,5 @@
 from sqlalchemy.orm import sessionmaker
+import json
 
 from database.models import OfferModel, engine
 
@@ -45,16 +46,16 @@ class Offer:
 # für flüchtige Tabelle
 def replace_offers(dict_angebote: dict):
     session.query(OfferModel).delete()
+    save_offers(dict_angebote)
     
-    for _, offer_data in dict_angebote.items():
-        offer = OfferModel(**offer_data)
-        session.add(offer)
-    
-    session.commit()
 
 # für persistente Tabelle
 def save_offers(dict_angebote: dict):
     for _, offer_data in dict_angebote.items():
+        for key, value in offer_data.items():
+            if isinstance(value, str):
+                offer_data[key] = json.dumps(value, ensure_ascii=False)
+        
         offer = OfferModel(**offer_data)
         session.add(offer)
     session.commit()

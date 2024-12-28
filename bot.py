@@ -56,7 +56,7 @@ def main():
     
     # Täglich nach neuen Angeboten suchen und Nutzer benachrichtigen
     scheduler = BackgroundScheduler()
-    scheduler.add_job(notify_users_with_new_offers, "cron", hour=14, minute=30, args=[TOKEN], timezone="Europe/Berlin")
+    scheduler.add_job(notify_users_with_new_offers, "cron", hour=14, minute=35, args=[TOKEN], timezone="Europe/Berlin")
     scheduler.start()
     
     application.run_polling()

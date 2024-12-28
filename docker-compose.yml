@@ -16,6 +16,7 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_CHARSET: utf8mb4
     ports:
       - "3307:3306" # Map to a different port on the host
     volumes:

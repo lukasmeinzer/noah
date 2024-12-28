@@ -52,9 +52,9 @@ def replace_offers(dict_angebote: dict):
 # für persistente Tabelle
 def save_offers(dict_angebote: dict):
     for _, offer_data in dict_angebote.items():
-        for key, value in offer_data.items():
-            if isinstance(value, str):
-                offer_data[key] = value.encode('utf-8').decode('utf-8')
+        # for key, value in offer_data.items():
+        #     if isinstance(value, str):
+        #         offer_data[key] = value.encode('utf-8').decode('utf-8')
         
         offer = OfferModel(**offer_data)
         session.add(offer)

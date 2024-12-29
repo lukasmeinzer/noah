@@ -1,11 +1,4 @@
-from sqlalchemy.orm import sessionmaker
-import json
-
-from database.models import OfferModel, engine
-
-Session = sessionmaker(bind=engine)
-session = Session()
-
+from database.models import OfferModel, Session
 
 class Offer:
     def __init__(self, id, user_id, supermarkt, gesuchtes_produkt, beschreibung, preis, alter_preis, referenz_preis, requiresLoyaltyMembership, gültig_von, gültig_bis, gefundenes_produkt, image):
@@ -45,36 +38,35 @@ class Offer:
 
 # für flüchtige Tabelle
 def replace_offers(dict_angebote: dict):
-    session.query(OfferModel).delete()
-    save_offers(dict_angebote)
+    with Session() as session:
+        session.query(OfferModel).delete()
+        save_offers(dict_angebote)
     
 
 # für persistente Tabelle
 def save_offers(dict_angebote: dict):
-    for _, offer_data in dict_angebote.items():
-        # for key, value in offer_data.items():
-        #     if isinstance(value, str):
-        #         offer_data[key] = value.encode('utf-8').decode('utf-8')
-        
-        offer = OfferModel(**offer_data)
-        session.add(offer)
-    session.commit()
+    with Session() as session:
+        for _, offer_data in dict_angebote.items():
+            offer = OfferModel(**offer_data)
+            session.add(offer)
+        session.commit()
 
 def load_offers() -> dict:
-    offers = session.query(OfferModel).all()
-    return {
-        f"{offer.supermarkt}_{offer.gefundenes_produkt}_{offer.user_id}": {
-            "user_id": offer.user_id,
-            "supermarkt": offer.supermarkt,
-            "gesuchtes_produkt": offer.gesuchtes_produkt,
-            "beschreibung": offer.beschreibung,
-            "preis": offer.preis,
-            "alter_preis": offer.alter_preis,
-            "referenz_preis": offer.referenz_preis,
-            "requiresLoyaltyMembership": offer.requiresLoyaltyMembership,
-            "gültig_von": offer.gültig_von,
-            "gültig_bis": offer.gültig_bis,
-            "gefundenes_produkt": offer.gefundenes_produkt,
-            "image": offer.image
-        } for offer in offers
-    }
+    with Session() as session:
+        offers = session.query(OfferModel).all()
+        return {
+            f"{offer.supermarkt}_{offer.gefundenes_produkt}_{offer.user_id}": {
+                "user_id": offer.user_id,
+                "supermarkt": offer.supermarkt,
+                "gesuchtes_produkt": offer.gesuchtes_produkt,
+                "beschreibung": offer.beschreibung,
+                "preis": offer.preis,
+                "alter_preis": offer.alter_preis,
+                "referenz_preis": offer.referenz_preis,
+                "requiresLoyaltyMembership": offer.requiresLoyaltyMembership,
+                "gültig_von": offer.gültig_von,
+                "gültig_bis": offer.gültig_bis,
+                "gefundenes_produkt": offer.gefundenes_produkt,
+                "image": offer.image
+            } for offer in offers
+        }

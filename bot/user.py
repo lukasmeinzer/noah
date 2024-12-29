@@ -1,12 +1,8 @@
 import json
 from typing import Literal
 from telegram import Update
-from sqlalchemy.orm import sessionmaker
 
-from database.models import UserModel, engine
-
-Session = sessionmaker(bind=engine)
-session = Session()
+from database.models import UserModel, Session
 
 class User():
     def __init__(self, id: int, first_name: str, last_name: str | None, zip_code : str | None, markets: list | None, products: list | None):
@@ -47,55 +43,59 @@ class User():
         }
 
 def save_updates(id: int, to_update: str, updating):
-    user = session.query(UserModel).filter_by(id=id).first()
-    if user:
-        setattr(user, to_update, json.dumps(updating, ensure_ascii=False) if isinstance(updating, list) else updating)
-        session.commit() 
+    with Session() as session:
+        user = session.query(UserModel).filter_by(id=id).first()
+        if user:
+            setattr(user, to_update, json.dumps(updating, ensure_ascii=False) if isinstance(updating, list) else updating)
+            session.commit() 
 
 def load_users() -> dict[int, User]:
-    try:
-        users = session.query(UserModel).all()
-        return {user.id: User(
-            id=user.id,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            zip_code=user.zip_code,
-            markets=json.loads(user.markets),
-            products=json.loads(user.products)
-        ) for user in users}
-    except:
-        session.rollback()
-        print("Error loading users")
-        raise
+    with Session() as session:
+        try:
+            users = session.query(UserModel).all()
+            return {user.id: User(
+                id=user.id,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                zip_code=user.zip_code,
+                markets=json.loads(user.markets),
+                products=json.loads(user.products)
+            ) for user in users}
+        except:
+            session.rollback()
+            print("Error loading users")
+            raise
     
 def load_user(id: int) -> User | None:
-    try:
-        user = session.query(UserModel).filter_by(id=id).first()
-        return User(
-            id=user.id,
-            first_name=user.first_name,
-            last_name=user.last_name,
-            zip_code=user.zip_code,
-            markets=json.loads(user.markets),
-            products=json.loads(user.products)
-        )
-    except:
-        session.rollback()
-        print("Error loading user")
-        return None
+    with Session() as session:
+        try:
+            user = session.query(UserModel).filter_by(id=id).first()
+            return User(
+                id=user.id,
+                first_name=user.first_name,
+                last_name=user.last_name,
+                zip_code=user.zip_code,
+                markets=json.loads(user.markets),
+                products=json.loads(user.products)
+            )
+        except:
+            session.rollback()
+            print("Error loading user")
+            return None
 
 def save_user(user: User):
-    user_data = user.to_dict()
-    new_user = UserModel(
-        id=user_data['id'],
-        first_name=user_data['first_name'],
-        last_name=user_data['last_name'],
-        zip_code=user_data['zip_code'],
-        markets=json.dumps(user_data["markets"], ensure_ascii=False),
-        products=json.dumps(user_data["products"], ensure_ascii=False)
-    )
-    session.add(new_user)
-    session.commit()
+    with Session() as session:
+        user_data = user.to_dict()
+        new_user = UserModel(
+            id=user_data['id'],
+            first_name=user_data['first_name'],
+            last_name=user_data['last_name'],
+            zip_code=user_data['zip_code'],
+            markets=json.dumps(user_data["markets"], ensure_ascii=False),
+            products=json.dumps(user_data["products"], ensure_ascii=False)
+        )
+        session.add(new_user)
+        session.commit()
 
 async def check_for_user(update: Update) -> User | None:
     user = load_user(id=update.effective_user.id)

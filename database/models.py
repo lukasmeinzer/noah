@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, BigInteger, String, Text, Date, Boolean, ForeignKey, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 import os
 
 Base = declarative_base()
@@ -43,8 +43,7 @@ class Feedback(Base):
 
 if os.getenv("DATABASE_URL"):
     DATABASE_URL = os.getenv("DATABASE_URL")
-engine = create_engine(DATABASE_URL)
-Session = sessionmaker(bind=engine)
-session = Session()
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, pool_recycle=3600)
+Session = scoped_session(sessionmaker(bind=engine))
 
 Base.metadata.create_all(engine)

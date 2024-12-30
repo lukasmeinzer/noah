@@ -5,10 +5,11 @@ import asyncio
 
 from bot.notify import notify_single_user_with_current_offers
 from bot.user import User, save_user, check_for_user, load_user
+from bot.utils import set_no_context
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    
+    set_no_context(context)
     user = load_user(id=update.effective_user.id)
     
     # new user
@@ -36,6 +37,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def notify_now(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     user = await check_for_user(update)
     if user is None: return
 
@@ -43,6 +45,7 @@ async def notify_now(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     await asyncio.sleep(0)
 
 async def about(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     await update.message.reply_text(
         "Dieser Bot wird dich täglich um 9 Uhr benachrichtigen, sobald deine Lieblingsprodukte im Angebot sind. \n\n" \
         "Du wirst für alle Produkte auf deiner Watchlist benachrichtigt, " \
@@ -53,6 +56,7 @@ async def about(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     await update.message.reply_text(
         "Verfügbare Kommandos: \n" \
         "/start - Bot starten \n" \
@@ -69,6 +73,7 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     
 
 async def feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     user = await check_for_user(update)
     if user is None: return
     
@@ -79,6 +84,7 @@ async def feedback(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def set_zip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     user = await check_for_user(update)
     if user is None: return
     
@@ -89,6 +95,7 @@ async def set_zip(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def add_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     user = await check_for_user(update)
     if user is None: return
     
@@ -97,9 +104,10 @@ async def add_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     
     await update.message.reply_text(
         "Bitte schick mir ein Einzelnes oder eine Liste von Produkten, mit Kommas getrennt")
-    
+
 
 async def del_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     user = await check_for_user(update)
     if user is None: return
     
@@ -111,6 +119,7 @@ async def del_products(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 
 async def add_markets(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     user = await check_for_user(update)
     if user is None: return
     
@@ -121,6 +130,7 @@ async def add_markets(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
     
     
 async def del_markets(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     user = await check_for_user(update)
     if user is None: return
     
@@ -131,6 +141,7 @@ async def del_markets(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 
 
 async def show_me(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    set_no_context(context)
     user = await check_for_user(update)
     if user is None: return
     

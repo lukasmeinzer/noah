@@ -64,3 +64,7 @@ def supermarkt_und_angebot_valide(user: User, angebote: dict, supermarkt: str) -
         supermarkt_valide = any(m.lower() in [market.lower() for market in user.markets] for m in supermarkt.split(" "))
     
     return produkt_valide and supermarkt_valide
+
+def set_no_context(context):
+    """context aufräumen, um Konflike in der Eingabe ohne Command zu vermeiden"""
+    context.user_data.clear()

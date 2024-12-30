@@ -45,8 +45,11 @@ def dict_diff(from_: dict, to: dict) -> dict:
     for key in from_.keys() & to.keys():
         if key == "image": # Skip image key as it is not relevant for the comparison
             continue
-        from__value = {k: str(v).lower() for k, v in from_[key].items()}
-        to_value = {k: str(v).lower() for k, v in to[key].items()}
+        # Convert all values to lowercase strings
+        # This is necessary because the API sometimes returns floats as strings
+        # float values are converted to strings with two decimal places
+        from__value = {k: str(format(float(v), ".2f") if (isinstance(v, float) or ((type(v) == str) and v.isdigit())) else v).lower() for k, v in from_[key].items()}
+        to_value = {k: str(format(float(v), ".2f") if (isinstance(v, float) or ((type(v) == str) and v.isdigit())) else v).lower() for k, v in to[key].items()}
         if from__value != to_value:
             diff[key] = {"from": from_[key], "to": to[key]}
             

@@ -9,7 +9,7 @@ RUN pip install --no-cache-dir poetry
 
 # Copy only Poetry-related files first (to leverage Docker's caching mechanism)
 COPY pyproject.toml poetry.lock ./
-RUN poetry install 
+RUN poetry install --not-root --no-dev
 
 # Copy the rest of the application code
 COPY . /app/

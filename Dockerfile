@@ -5,10 +5,10 @@ ENV PATH="/root/.local/bin:$PATH"
 WORKDIR /app
 
 # Install Poetry
-RUN pip install --no-cache-dir poetry
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
 # Copy only Poetry-related files first (to leverage Docker's caching mechanism)
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml poetry.lock /app/
 RUN poetry install --no-root --no-dev
 
 # Copy the rest of the application code

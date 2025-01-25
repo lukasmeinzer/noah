@@ -52,7 +52,7 @@ def save_updates(id: int, to_update: str, updating):
 def load_users() -> dict[int, User]:
     with Session() as session:
         try:
-            users = session.query(UserModel).all()
+            users = session.query(UserModel).all() 
             return {user.id: User(
                 id=user.id,
                 first_name=user.first_name,

@@ -43,14 +43,19 @@ def dict_diff(from_: dict, to: dict) -> dict:
 
     # Find keys present in both but with different values
     for key in from_.keys() & to.keys():
-        if key == "image": # Skip image key as it is not relevant for the comparison
-            continue
-        # Convert all values to lowercase strings
-        # This is necessary because the API sometimes returns floats as strings
-        # float values are converted to strings with two decimal places
-        from__value = {k: str(format(float(v), ".2f") if (isinstance(v, float) or ((type(v) == str) and v.isdigit())) else v).lower() for k, v in from_[key].items()}
-        to_value = {k: str(format(float(v), ".2f") if (isinstance(v, float) or ((type(v) == str) and v.isdigit())) else v).lower() for k, v in to[key].items()}
-        if from__value != to_value:
+        if key == "ALDI SÜD_Peanut Chocolate_7192930706":
+            break
+        
+        user_id_new = from_[key]["user_id"] != to[key]["user_id"]
+        supermarkt_new = from_[key]["supermarkt"] != to[key]["supermarkt"]
+        gesuchtes_produkt_new = from_[key]["gesuchtes_produkt"] != to[key]["gesuchtes_produkt"]
+        gefundenes_produkt_new = from_[key]["gefundenes_produkt"] != to[key]["gefundenes_produkt"]
+        gültig_von_new = from_[key]["gültig_von"] != to[key]["gültig_von"]
+        gültig_bis_new = from_[key]["gültig_bis"] != to[key]["gültig_bis"]
+        
+        neues_angebot = any([user_id_new, supermarkt_new, gesuchtes_produkt_new, gefundenes_produkt_new, gültig_von_new, gültig_bis_new])
+        
+        if neues_angebot:
             diff[key] = {"from": from_[key], "to": to[key]}
             
     return diff

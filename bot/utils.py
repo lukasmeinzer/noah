@@ -43,8 +43,6 @@ def dict_diff(from_: dict, to: dict) -> dict:
 
     # Find keys present in both but with different values
     for key in from_.keys() & to.keys():
-        if key == "ALDI SÜD_Peanut Chocolate_7192930706":
-            break
         
         user_id_new = from_[key]["user_id"] != to[key]["user_id"]
         supermarkt_new = from_[key]["supermarkt"] != to[key]["supermarkt"]
